@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{super()}}
+{% endblock %}
+{% block content %}
+  <form class="form-horizontal">
+    <legend>Вход в систему</legend>
+  <div class="control-group">
+    <label class="control-label" for="inputEmail">Эл. почта</label>
+    <div class="controls">
+      <input type="text" id="inputEmail" placeholder="Эл. почта">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">Пароль</label>
+    <div class="controls">
+      <input type="password" id="inputPassword" placeholder="Пароль">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <label class="checkbox">
+        <input type="checkbox"> Запомнить меня
+      </label>
+      <button type="submit" class="btn">Войти</button>
+    </div>
+  </div>
+</form>
+{% endblock %}

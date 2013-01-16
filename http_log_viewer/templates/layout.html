@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <title>ATI.SU - {% block title %}{% endblock %}</title>
+    {% endblock %}
+    <script src="{{ url_for('static', filename='js/jquery-1.8.1.min.js')}}" ></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+  </head>
+<body>
+  <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+  <div class="container-fluid">
+  <div class="row-fluid">
+    <!-- <div class="span2">
+      {% block sidebar %}{% endblock %}
+    </div> -->
+    <div class="span10">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+<!-- footer -->
+<footer class="footer">
+      <div class="container">
+        
+      </div>
+    </footer>
+  
+</body>

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+uwsgi -s /tmp/uwsgi.sock -w app:app -H /var/www/httplogviewer/venv --chmod-socket 666

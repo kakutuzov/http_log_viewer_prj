@@ -1,0 +1,43 @@
+div.hlv-search input.path {
+  width: 400px; }
+div.hlv-search div.inline {
+  margin-right: 5px;
+  float: left; }
+div.hlv-search input.time {
+  width: 55px; }
+div.hlv-search input.username {
+  width: 196px; }
+div.hlv-search input.ip {
+  width: 128px; }
+div.hlv-search select.rpp {
+  width: 80px; }
+div.hlv-search select.date {
+  width: 140px; }
+div.hlv-search div.find {
+  margin-left: 395px; }
+
+div.hlv-result legend small {
+  float: right;
+  text-align: right; }
+div.hlv-result legend i {
+  color: #08C; }
+div.hlv-result div.hlv-result-grid tr.more-info {
+  display: none; }
+  div.hlv-result div.hlv-result-grid tr.more-info td {
+    border-top: none !important; }
+  div.hlv-result div.hlv-result-grid tr.more-info .mi-info .mi-field-name {
+    width: 85px; }
+div.hlv-result div.hlv-result-grid .index {
+  width: 20px; }
+div.hlv-result div.hlv-result-grid .date {
+  width: 75px; }
+div.hlv-result div.hlv-result-grid .user {
+  width: 60px; }
+  div.hlv-result div.hlv-result-grid .user label {
+    width: 90px; }
+div.hlv-result div.hlv-result-grid .path {
+  width: 150px; }
+div.hlv-result div.hlv-result-grid .ip {
+  width: 80px; }
+div.hlv-result div.hlv-result-grid td.index i:hover {
+  background-color: rgba(255, 0, 0, 0.25); }

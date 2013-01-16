@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block title %}Http Log Viewer{% endblock %}
+{% block head %}
+{{super()}}
+{% endblock %}
+{% block content %}
+<!-- <h1>http log viewer</h1> -->
+<div class="hlv-search">
+<form class="form" method="get">
+  <legend>Search</legend>
+
+  <!-- Date 2012_08_05-->
+  {% set date = request.args.get("date") if request.args.get("date") else '' %}
+  <div class="input-prepend inline" style="">
+      <span class="add-on">Date <b>=</b></span>
+      <select class="date" id="date" name="date">
+          {% for _date in dates %}
+          <option {{ 'selected' if date == _date}} value="{{_date}}">{{_date}}</option>  
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- time -->
+    {% set time_f = request.args.get("time_f") if request.args.get("time_f") else '' %}
+    <div class="input-prepend inline" style="">
+      <span class="add-on">Time <b>from</b></span>
+      <input class="span2 time" id="time_f" size="16" type="text" placeholder="11:45" name="time_f" value="{{ time_f }}" />
+    </div>
+    {% set time_to = request.args.get("time_to") if request.args.get("time_to") else '' %}
+    <div class="input-prepend" style="">
+      <span class="add-on">Time <b>to</b></span>
+      <input class="span2 time" id="time_to" size="16" type="text" placeholder="11:45" name="time_to" value="{{ time_to }}" />
+    </div>
+
+    <!-- url path without query string-->
+  {% set path = request.args.get("path") if request.args.get("path") else '' %}
+    <div class="input-prepend">
+      <span class="add-on">Path <b>=</b> </span><input class="span2 path" id="path" size="16" type="text" placeholder="/tables/default.aspx" name="path" value="{{ path }}" />
+    </div>
+
+<!-- querystring: hidden now-->
+    
+{% set qs = request.args.get("qs") if request.args.get("qs") else '' 
+  %}
+    <div class="input-prepend" style="display:none">
+      <span class="add-on">Query <b>contains</b> </span><input class="span2 path" id="path" size="16" type="text" placeholder="firmid=5555" name="qs" value="{{ qs }}" />
+    </div>
+
+<!-- username -->
+
+    {% set username = request.args.get("username") if request.args.get("username") else '' %}
+  <div class="input-prepend inline">
+  <span class="add-on">Username <b>=</b> </span>
+    <input class="span2 username" id="username" size="16" type="text" placeholder="ioannes" name="username" value="{{ username }}" />
+  </div>
+
+
+    {% set ip = request.args.get("ip") if request.args.get("ip") else '' %}
+  <div class="input-prepend">
+  <span class="add-on">IP <b>=</b> </span>
+    <input class="span2 ip" id="ip" size="16" type="text" placeholder="92.243.79.133" name="ip" value="{{ ip }}" />
+  </div>
+
+<!-- rows per page -->
+  <div class="input-prepend" style="float:left">
+      <span class="add-on">Rows per page</span>
+      <select class="rpp" id="rpp" name="rpp">
+        {% for _rpp in [10,50,100,500,1000] %}
+          <option {{ 'selected' if rpp == _rpp}}>{{_rpp}}</option>  
+        {% endfor %}
+      </select>
+    </div>
+  {#% set rpp = request.args.get("ip") if request.args.get("ip") else '10' %#}
+  <div class="control-group find">
+     <button class="btn" type="submit">Find</button>
+  </div>
+</form>
+
+</div>
+
+<div class="hlv-result">
+    <div class="hlv-result-grid">
+        <legend>Result <small class="muted">found <i>{{ requests.count() }}</i> requests sorted by <i>time</i></small></legend> 
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="index">#</th>
+              <th class="date">Time (UTC)</th>
+              {#<th class="user">Username</th>#}
+              <th class="ip">IP</th>
+              <th class="path">Path</th>
+              <th class="query">Query</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for row in requests %}
+        <tr>
+          <td class="index">
+            <span style="padding-left:2px" class="number">{{ loop.index + skip }}</span>
+            <a href="#"><i title="show more" class="icon-info-sign" id="{{row['_id']}}"></i></a>
+            <script type="text/javascript">
+              $("#{{row['_id']}}").click( function() {
+                var moreinfo = $("#mi_{{row['_id']}}");
+                if (moreinfo.is(':visible') ) {
+                  moreinfo.hide();
+                } else {
+                   $.getJSON($SCRIPT_ROOT + '/_get_more_info', {
+                   db_date : "{{date}}",
+                   row_id : "{{row['_id']}}"
+                  }, function(data) {
+                    // debugger;
+                    moreinfo.find("td[colspan=5]").html(data.request);
+                    moreinfo.show();
+                  });
+                 }
+                  return false;
+              })
+            </script>
+          </td>
+          <td class="date"><label>{{ "%s" | format(row['tE']) }}</label></td>
+          {# --comment
+          <td class="user">
+            <label style="text-align:center">
+              {% if row['cU'] == username or not row['cU'] %}
+                  {{ row['cU'] }}
+              {% else%}
+                  <small  class="muted"><abbr title="Not Available due to privacy settings. You can only search by the this field." class="initialism">n/a</abbr></small> 
+              {% endif %}
+            </label>
+          </td>#}
+          <td class="ip">{{ row['cIP'] }}</td>
+          <td class="path">{{ row['cURL'] }}</td>
+          <td class="query">{{ row['cQS'] }}</td>
+      </tr>
+      <tr class="more-info info" id="mi_{{row['_id']}}">
+        <td></td><td colspan="5"></td>
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="hlv-result-pager">
+   <ul class="pager">
+    {% set prev_query = '?path=%s&username=%s&ip=%s&qs=%s&date=%s&time_f=%s&time_to=%s&skip=%s&rpp=%s' | format(path, username, ip, qs, date, time_f, time_to, (skip-rpp if skip-rpp > 0 else 0 ), rpp) %}
+  <li class="{{'disabled' if skip <= 0}}"><a href="{{ '#' if skip <= 0 else request.path + prev_query }}">Previous</a></li>
+  {% set next_query = '?path=%s&username=%s&ip=%s&qs=%s&date=%s&time_f=%s&time_to=%s&skip=%s&rpp=%s' | format(path, username, ip, qs, date, time_f, time_to, skip+rpp, rpp) %}
+  <li class="{{ 'disabled' if requests.count() < rpp }}"><a href="{{ request.path + next_query}}">Next</a></li>
+</ul>
+</div>
+{% endblock %}
