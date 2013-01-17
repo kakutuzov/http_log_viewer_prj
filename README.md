@@ -1,2 +1,2 @@
-http_log_viewer_prj
+*http_log_viewer_prj*
 ===================
