@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- encoding: utf-8 -*-
+
 from flask import Flask, render_template, request, jsonify
 import http_searcher as s
 from datetime import datetime, date, timedelta
@@ -5,8 +8,8 @@ import logging
 
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET'])
-def index():
+@app.route('/log', methods = ['GET'])
+def log():
     query_path = request.args.get("path") 
     query_username = request.args.get("username")
     query_ip = request.args.get("ip")
@@ -67,6 +70,54 @@ def get_more_info():
         ''.join(['<tr><td class="mi-field-name"><b>%s</b></td> \
             <td class="mi-field-value">%s</td></tr>' \
             % (key, value) for (key, value) in fields.items()]))
+
+
+@app.route("/top_log/ajax_requests_by_ids", methods=['POST'])
+def ajax_requests_by_ids():
+    print("ajax_requests_by_ids start")
+    print(request.data)
+    print(request.json)
+    print(request.method)
+    print([x for x in request.form])
+    ids = request.form.get('ids')
+    requests = s.get_requests_by_ids(ids.split(','))
+    table_html = """<blockquote><table class='table'><thead>
+		  <tr>
+		    <th>Login</th>
+		    <th>Server</th>
+		    <th>Time(UTC)</th>
+		    <th>URL</th>
+		    <th>QS</th>
+		  </tr>
+		</thead><tbody> %s </tbody></table></blockquote>"""
+    tr_html = """<tr>
+		    <td>%s</td>
+		    <td>%s</td>
+		    <td>%s</td>
+		    <td>%s</td>
+		    <td>%s</td>
+		  </tr>"""
+    json = jsonify(html = table_html % \
+                       ''.join([ tr_html % \
+                                     (r[s.FIELD_USERNAME], r[s.FIELD_SERVER], r[s.FIELD_START], r[s.FIELD_URL], r[s.FIELD_QS]) for r in requests]))
+    print("ajax_requests_by_ids finish")
+    return json
+
+
+@app.route("/top_log")
+def top_log():
+    mins = int(request.args.get('mins')) or 5
+    top = int(request.args.get('top')) or 50
+    print("mins = %s, top = %s" % (mins , top))
+    (requests_groups, db_name, requests_count) = s.get_top_requests(mins, top)
+    print(len(requests_groups))
+    return render_template('top_requests.html', \
+                               requests_groups = requests_groups, \
+                               db_name = db_name, \
+                               requests_count = requests_count, \
+                               mins = mins, \
+                               top = top)
+
 
 if __name__ == '__main__':
     app.debug = True

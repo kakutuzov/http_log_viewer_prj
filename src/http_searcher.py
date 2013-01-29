@@ -4,11 +4,25 @@ from bson.objectid import ObjectId
 import ast
 import logging
 from datetime import date, time, datetime, timedelta
+import pymongo
 import sys
 
+
+FIELD_IP = "cIP"
+FIELD_START = "tB"
+FIELD_ID = "_id"
+FIELD_TIME = 'tT'
+FIELD_QS = 'cQS'
+FIELD_URL = "cURL"
+FIELD_SERVER = "sIP"
+FIELD_USERNAME = 'cU'
+
+CONNECTION = "mongodb://192.168.0.158:27017/?slaveOk=true"
+
+
 def get_connection():
-    c = Connection('mongodb://192.168.0.158:27017,192.168.0.159:27017/?slaveOk=true;replicaSet=ati_log')
-    # c = Connection('mongodb://192.168.222.40:27017')
+    c = Connection(CONNECTION)
+    #c = Connection('mongodb://192.168.222.40:27017')
     #c = Connection()
     return c
 
@@ -25,6 +39,61 @@ def get_db(db_date):
         return db
     else:
         return None
+
+
+def get_latest_db():
+    c = get_connection()
+    db_names = sorted(filter(\
+        lambda db_name: db_name.startswith('ati_log_'),c.database_names()),\
+                          reverse=True)
+    latest_db_name = db_names[0] if db_names else None
+    return c[latest_db_name]
+
+def get_top_requests(mins, top):
+    db = get_latest_db()
+    r_groups = []
+    count = 0
+    db_name = 'Undefined'
+    if db and db.requests and db.requests.count() > 0:
+        #fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
+                      #FIELD_QS, FIELD_SERVER, FIELD_USERNAME]
+        fields = [FIELD_IP, FIELD_START]
+        print(datetime.now())
+        print("find starts: {0}".format(datetime.now()))
+        requests = db.requests.find(limit=1000000,\
+                                        fields = fields, \
+                                        sort=[(FIELD_ID,pymongo.DESCENDING)])
+        time_start = requests[0][FIELD_START]
+        print("find ends: {0}".format(datetime.now()))
+        time_finish = time_start - timedelta(seconds=mins*60)
+        print("time stop: {0}".format(time_finish))      # remove line debug only
+        r_by_ip = {}
+        for r in requests:
+            #print(r[FIELD_START]) # remove
+            if not r[FIELD_START] or r[FIELD_START] < time_finish:
+                break
+            else:
+                count += 1
+                ip = r[FIELD_IP]
+                if ip not in r_by_ip:
+                    r_by_ip[ip] = [str(r[FIELD_ID])]
+                else:
+                    r_by_ip[ip].append(str(r[FIELD_ID]))
+        print("sorted start: {0}".format(datetime.now()))
+        r_groups = sorted(\
+            r_by_ip.items(), key = lambda (k,v):len(v), reverse=True)[:top]
+        print("sorted finish: {0}".format(datetime.now()))
+    return (r_groups, db_name, count)
+
+def get_requests_by_ids(ids = []):
+    db = get_latest_db()
+    requests = []
+    if db and db.requests:
+        fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
+                      FIELD_QS, FIELD_SERVER, FIELD_USERNAME]
+        query = {FIELD_ID : {'$in':[ObjectId(id) for id in ids]}}
+        requests = db.requests.find(query, fields= fields, limit = 1000)
+    return requests
 
 def search_by_params(cURL = '',  cU = '', cIP= '', cQS = '', \
         db_date = '', tE_min = None, \
