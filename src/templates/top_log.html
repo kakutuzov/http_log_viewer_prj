@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ATI.SU - http top log viewer</title>
+    <!-- Bootstrap -->
+    <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{url_for('static',filename='css/style.css')}}" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
+    <script type="text/javascript">
+      function ajax_requests_by_ids(container, ids) {
+      $.post(
+      $SCRIPT_ROOT + "/top_log/ajax_requests_by_ids",
+      { ids: ids }, 
+      "json"
+      ).done(function( data ) {
+        //debugger;
+        container.html(data.html);
+        container.toggle();
+      });
+      }
+    </script>
+
+    <script type="text/javascript">
+      $().ready(function() {
+        $("a.tr-result-ip-toggle").click(function(){
+         //debugger;
+         container = $("#requests-" + $(this).attr("ip"))
+         if(container.is(":visible")) {
+         container.toggle();
+         } else {
+         ids = $(this).attr("requests-ids")
+         ajax_requests_by_ids(container, ids)
+         }
+         return false;
+        })
+      })
+
+    </script>
+    
+    <!-- <div class="page-header"> -->
+    <!--   <h1>Top requests from database '{{db_name}}'</h1> -->
+    <!-- </div> -->
+    
+    <div class="container-fluid">
+      <div class="row-fluid">
+	<div class="span2">
+	  <!--Sidebar content-->
+	</div>
+	<div class="span10">
+	  <form class="form-inline tr-search" method="get">
+	    <fieldset>
+	      <legend>Search </legend>
+	      <div class="input-prepend input-append tr-search-mins">
+		<span class="add-on">Last</span>
+		<select name="mins">
+		  {%for option in range(1,16) %}
+		  <option value="{{option}}" {{'selected' if option == mins}}>
+		    {{option}}</option>
+		  {%endfor%} 
+		</select>
+		<span class="add-on">mins</span>
+	      </div>
+	      <div class="input-prepend input-append tr-search-top">
+		<span class="add-on">Top</span>
+		<select name="top">
+		  {%for option in [10, 20, 30 , 40, 50, 100] %}
+		  <option value="{{option}}" {{'selected' if option == top}}>
+		    {{option}}</option>
+		  {%endfor%}
+		</select>
+		<span class="add-on">IPs</span>
+	      </div>
+	      <button type="submit" class="btn">Show</button>
+	    </fieldset>
+	  </form>
+	  <div class="tr-result">
+	    <legend>Result
+	      <small class="muted">found <i>{{requests_count}}</i> requests sorted by <i>count</i></small>
+	    </legend>
+	    <ol>
+	    {%for group in requests_groups %}
+	    {%set ip = group[0] %}
+	    {%set requests = group[1] %}
+	    
+	      <li class="tr-result-ip">
+		<strong >{{ip}}</strong>
+		<a href="#" ip="{{ip |  replace('.', '')}}" requests-ids="{{','.join(requests)}}" class="tr-result-ip-toggle" >{{requests | length}} requests</a>
+		 
+	      </li>
+	      <div class="tr-result-ip-requests" id="requests-{{ip | replace('.', '')}}" style="display:none">
+		
+	      </div>
+	      	    
+	    {%endfor%}
+	    </ol>
+	  </div>
+	</div>
+      </div>
+      
+    </div>
+    
+
+  </body>
+</html>
