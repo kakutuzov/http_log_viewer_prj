@@ -106,8 +106,8 @@ def ajax_requests_by_ids():
 
 @app.route("/top_log")
 def top_log():
-    mins = int(request.args.get('mins')) or 5
-    top = int(request.args.get('top')) or 50
+    mins = int(request.args.get('mins') or 5)
+    top = int(request.args.get('top') or 50)
     print("mins = %s, top = %s" % (mins , top))
     (requests_groups, db_name, requests_count) = s.get_top_requests(mins, top)
     print(len(requests_groups))
