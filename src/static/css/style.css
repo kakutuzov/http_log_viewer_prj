@@ -7,11 +7,19 @@ form.tr-search {
     //margin-botton:1em;
 }
 
+.tr-search-top, .tr-search-mins {
+    margin-right:1em;
+}
+
 .tr-search-top select, .tr-search-mins select{
     width:70px;
 }
 
-li.tr-result-ip-header strong{
+li.tr-result-ip {
+    //list-style-type:none;
+}
+
+li.tr-result-ip strong{
     width:150px;
     display:inline-block;
     //font-size:1.1em;

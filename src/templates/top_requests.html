@@ -88,8 +88,8 @@
 	    {%for group in requests_groups %}
 	    {%set ip = group[0] %}
 	    {%set requests = group[1] %}
-	    <div class="tr-result-ip">
-	      <li class="tr-result-ip-header">
+	    
+	      <li class="tr-result-ip">
 		<strong >{{ip}}</strong>
 		<a href="#" ip="{{ip |  replace('.', '')}}" requests-ids="{{','.join(requests)}}" class="tr-result-ip-toggle" >{{requests | length}} requests</a>
 		 
@@ -97,9 +97,7 @@
 	      <div class="tr-result-ip-requests" id="requests-{{ip | replace('.', '')}}" style="display:none">
 		
 	      </div>
-	      
-	    </div>
-	    
+	      	    
 	    {%endfor%}
 	    </ol>
 	  </div>
