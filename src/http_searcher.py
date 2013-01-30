@@ -16,6 +16,8 @@ FIELD_QS = 'cQS'
 FIELD_URL = "cURL"
 FIELD_SERVER = "sIP"
 FIELD_USERNAME = 'cU'
+FIELD_METHOD = 'cM'
+FIELD_STATUS = 'scS'
 
 CONNECTION = "mongodb://192.168.0.158:27017/?slaveOk=true"
 
@@ -90,7 +92,7 @@ def get_requests_by_ids(ids = []):
     requests = []
     if db and db.requests:
         fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
-                      FIELD_QS, FIELD_SERVER, FIELD_USERNAME]
+                      FIELD_QS, FIELD_SERVER, FIELD_USERNAME, FIELD_STATUS, FIELD_METHOD]
         query = {FIELD_ID : {'$in':[ObjectId(id) for id in ids]}}
         requests = db.requests.find(query, fields= fields, limit = 1000)
     return requests

@@ -22,7 +22,18 @@ li.tr-result-ip {
 li.tr-result-ip strong{
     width:150px;
     display:inline-block;
-    //font-size:1.1em;
+    //font-size:1.;
+}
+
+.tr-result-ip-qs {
+    width:500px;
+    word-wrap:break-word;
+}
+
+
+.tr-result-ip-time {
+    width:100px;
+    word-wrap:break-word;
 }
 
 

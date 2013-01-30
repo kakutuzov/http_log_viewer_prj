@@ -86,6 +86,8 @@ def ajax_requests_by_ids():
 		    <th>Login</th>
 		    <th>Server</th>
 		    <th>Time(UTC)</th>
+                    <th>Method</th>
+                    <th>Status</th>
 		    <th>URL</th>
 		    <th>QS</th>
 		  </tr>
@@ -93,13 +95,21 @@ def ajax_requests_by_ids():
     tr_html = """<tr>
 		    <td>%s</td>
 		    <td>%s</td>
+		    <td class="tr-result-ip-time">%s</td>
+                    <td>%s</td>
 		    <td>%s</td>
 		    <td>%s</td>
-		    <td>%s</td>
+		    <td><div class="tr-result-ip-qs">%s</div></td>
 		  </tr>"""
     json = jsonify(html = table_html % \
                        ''.join([ tr_html % \
-                                     (r[s.FIELD_USERNAME], r[s.FIELD_SERVER], r[s.FIELD_START], r[s.FIELD_URL], r[s.FIELD_QS]) for r in requests]))
+                                   (r[s.FIELD_USERNAME], \
+                                        r[s.FIELD_SERVER], \
+                                        r[s.FIELD_START], \
+                                        (r[s.FIELD_METHOD] or '').upper(), \
+                                        r[s.FIELD_STATUS], \
+                                        r[s.FIELD_URL], \
+                                        r[s.FIELD_QS]) for r in requests]))
     print("ajax_requests_by_ids finish")
     return json
 
@@ -111,7 +121,7 @@ def top_log():
     print("mins = %s, top = %s" % (mins , top))
     (requests_groups, db_name, requests_count) = s.get_top_requests(mins, top)
     print(len(requests_groups))
-    return render_template('top_requests.html', \
+    return render_template('top_log.html', \
                                requests_groups = requests_groups, \
                                db_name = db_name, \
                                requests_count = requests_count, \
