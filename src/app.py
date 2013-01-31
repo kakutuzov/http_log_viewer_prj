@@ -88,6 +88,7 @@ def ajax_requests_by_ids():
 		    <th>Time(UTC)</th>
                     <th>Method</th>
                     <th>Status</th>
+                    <th>UserAgent</th>
 		    <th>URL</th>
 		    <th>QS</th>
 		  </tr>
@@ -96,6 +97,7 @@ def ajax_requests_by_ids():
 		    <td>%s</td>
 		    <td>%s</td>
 		    <td class="tr-result-ip-time">%s</td>
+                    <td>%s</td>
                     <td>%s</td>
 		    <td>%s</td>
 		    <td>%s</td>
@@ -108,6 +110,7 @@ def ajax_requests_by_ids():
                                         r[s.FIELD_START], \
                                         (r[s.FIELD_METHOD] or '').upper(), \
                                         r[s.FIELD_STATUS], \
+                                        r[s.FIELD_USERAGENT], \
                                         r[s.FIELD_URL], \
                                         r[s.FIELD_QS]) for r in requests]))
     print("ajax_requests_by_ids finish")
