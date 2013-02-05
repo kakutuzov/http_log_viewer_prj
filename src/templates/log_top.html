@@ -16,7 +16,7 @@
     <script type="text/javascript">
       function ajax_requests_by_ids(container, ids) {
       $.post(
-      $SCRIPT_ROOT + "/top_log/ajax_requests_by_ids",
+      $SCRIPT_ROOT + "/log/top/ajax_requests_by_ids",
       { ids: ids }, 
       "json"
       ).done(function( data ) {

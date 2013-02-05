@@ -1,5 +1,6 @@
-from pymongo import Connection
+from pymongo import Connection, MongoClient
 from pymongo import *
+from pymongo.read_preferences import ReadPreference
 from bson.objectid import ObjectId
 import ast
 import logging
@@ -20,11 +21,11 @@ FIELD_METHOD = 'cM'
 FIELD_STATUS = 'scS'
 FIELD_USERAGENT = 'cA'
 
-CONNECTION = "mongodb://192.168.0.158:27017/?slaveOk=true"
+CONNECTION = "mongodb://192.168.0.158:27017,192.168.0.159:27017/"
 
 
 def get_connection():
-    c = Connection(CONNECTION)
+    c = MongoClient(CONNECTION, read_preference= ReadPreference.SECONDARY)
     #c = Connection('mongodb://192.168.222.40:27017')
     #c = Connection()
     return c
@@ -224,6 +225,34 @@ def search_by_queries(collection, queries, skip, limit):
 #     query = ast.literal_eval(query_string if query_string else "{}")
 #     return db.requests.find(query).skip(skip).limit(count)
 
+
+def search_by_url(mins, url):
+    print("search by url starts: %s" % datetime.now())
+    db = get_latest_db()
+    requests = []
+    count_processed = 0
+    url = (url or '').lower()
+    if db and db.requests and db.requests.count() > 0:
+        fields = [FIELD_IP, FIELD_START, FIELD_USERNAME, FIELD_URL, FIELD_QS]
+        sort = [(FIELD_ID,pymongo.DESCENDING)]
+        print("find starts: {0}".format(datetime.now()))
+        requests_all = db.requests.find(limit=100000, fields = fields, sort=sort)
+        time_start = requests_all[0][FIELD_START]
+        print("find ends: {0}".format(datetime.now()))
+        time_finish = time_start - timedelta(seconds=mins*60)
+        print("time stop: {0}".format(time_finish))      # remove line debug only
+        
+        for r in requests_all:
+            count_processed += 1
+            if not r[FIELD_START] or r[FIELD_START] < time_finish:
+                break
+            else:
+                if url in r[FIELD_URL] or url in r[FIELD_QS]:
+                    requests.append(r)
+                
+    print("search by url ends: %s" % datetime.now())
+    print(requests)
+    return (requests, db.name if db else 'Undefined', count_processed)
 
 if __name__ == '__main__':
     result = search_by_params(cURL='', cIP='192.168.0.3')

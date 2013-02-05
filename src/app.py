@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import http_searcher as s
 from datetime import datetime, date, timedelta
 import logging
@@ -72,7 +72,7 @@ def get_more_info():
             % (key, value) for (key, value) in fields.items()]))
 
 
-@app.route("/top_log/ajax_requests_by_ids", methods=['POST'])
+@app.route("/log/top/ajax_requests_by_ids", methods=['POST'])
 def ajax_requests_by_ids():
     print("ajax_requests_by_ids start")
     print(request.data)
@@ -119,17 +119,36 @@ def ajax_requests_by_ids():
 
 @app.route("/top_log")
 def top_log():
+    return redirect(url_for('log_top'))
+
+@app.route("/log/top")
+def log_top():
     mins = int(request.args.get('mins') or 5)
     top = int(request.args.get('top') or 50)
     print("mins = %s, top = %s" % (mins , top))
     (requests_groups, db_name, requests_count) = s.get_top_requests(mins, top)
     print(len(requests_groups))
-    return render_template('top_log.html', \
+    return render_template('log_top.html', \
                                requests_groups = requests_groups, \
                                db_name = db_name, \
                                requests_count = requests_count, \
                                mins = mins, \
                                top = top)
+
+
+@app.route("/log/search/url")
+def log_search_url():
+    print("log_search_url starts: %s" % (datetime.now()))
+    mins = int(request.args.get('mins') or 1)
+    url = request.args.get('url') or ''
+    print("mins=%s, url=%s" % (mins, url))
+    (requests, db_name, count_processed) = s.search_by_url(mins, url)
+    return render_template('log_search_url.html', \
+                           requests = requests, \
+                           mins = mins, \
+                           url = url, \
+                           count = count_processed)
+    
 
 
 if __name__ == '__main__':

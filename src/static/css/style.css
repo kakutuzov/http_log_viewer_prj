@@ -7,11 +7,11 @@ form.tr-search {
     //margin-botton:1em;
 }
 
-.tr-search-top, .tr-search-mins {
+.tr-search-top, .tr-search-mins, .hlsu-search-mins, .hlsu-search-url {
     margin-right:1em;
 }
 
-.tr-search-top select, .tr-search-mins select{
+.tr-search-top select, .tr-search-mins select, .hlsu-search-mins select{
     width:70px;
 }
 
@@ -25,7 +25,12 @@ li.tr-result-ip strong{
     //font-size:1.;
 }
 
-.tr-result-ip-qs {
+.hlsu-result-time {
+    width:100px;
+}
+
+
+.tr-result-ip-qs, .hlsu-result-qs {
     width:500px;
     word-wrap:break-word;
 }
@@ -42,6 +47,16 @@ li.tr-result-ip strong{
     text-align: right;
 }
 
+
+.thsu-result {
+
+}
+
+
+.thsu-result-qs {
+    word-wrap:break-word;
+    width:500px;
+}
 
 
 div.hlv-search input.path {

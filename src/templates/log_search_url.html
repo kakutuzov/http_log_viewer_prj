@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block title %}ATI.SU - http log url searcher {% endblock %}
+{% block head %}
+{{super()}}
+{% endblock %}
+{% block content %}
+<!-- <h1>ATI.SU - http log url searcher</h1> -->
+<div class="hlsu-search">
+<form class="form-inline" method="get">
+  <fieldset>
+    <legend>Search</legend>
+    <div class="input-prepend input-append hlsu-search-mins">
+      <span class="add-on">Last</span>
+      <select name="mins">
+	{%for option in range(1,6) %}
+	<option value="{{option}}" {{'selected' if option == mins}}>
+	  {{option}}</option>
+	{%endfor%} 
+      </select>
+      <span class="add-on">mins</span>
+    </div>
+    <div class="input-prepend hlsu-search-url">
+      <span class="add-on">URL <b>contains</b> </span><input class="url" id="url" size="16" type="text" placeholder="example: txt=12345" name="url" value="{{ url }}"></input>
+    </div>
+    <button type="submit" class="btn">Search</button>
+  </fieldset>
+  
+</form>
+
+</div>
+
+<div class="hlsu-result">
+    <div class="hlsu-result-grid">
+        <legend>Result <small class="muted">found <i>{{ requests | length }}</i> requests from {{count}} processed  by <i>time</i></small></legend> 
+        <table class="table">
+          <thead>
+            <tr>
+              <th >#</th>
+              <th >Time (UTC)</th>
+              <th >Username</th>
+              <th >IP</th>
+              <th >Path</th>
+              <th >Query</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+	 <tr>
+	   <td>{{loop.index}}</td>
+	   <td class="hlsu-result-time">{{r['tB']}}</td>
+	   <td>{{r['cU']}}</td>
+	   <td>{{r['cIP']}}</td>
+	   <td>{{r['cURL']}}</td>
+	   <td><div class="hlsu-result-qs">{{r['cQS']}}</td>
+	 </tr>
+          
+	{% endfor %}
+      </tbody>
+</table>
+</div>
+	
+{% endblock %}
