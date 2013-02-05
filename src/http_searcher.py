@@ -252,6 +252,7 @@ def search_by_url(mins, url):
                 
     print("search by url ends: %s" % datetime.now())
     print(requests)
+    requests.sort(key=lambda r: r[FIELD_START], reverse=True)
     return (requests, db.name if db else 'Undefined', count_processed)
 
 if __name__ == '__main__':
