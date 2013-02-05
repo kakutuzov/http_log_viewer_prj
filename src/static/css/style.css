@@ -42,7 +42,7 @@ li.tr-result-ip strong{
 }
 
 
-.tr-result legend small {
+.tr-result legend small, .hlsu-result-grid legend small{
     float: right;
     text-align: right;
 }
