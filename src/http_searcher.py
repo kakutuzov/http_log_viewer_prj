@@ -243,12 +243,12 @@ def search_by_url(mins, url):
         print("time stop: {0}".format(time_finish))      # remove line debug only
         
         for r in requests_all:
-            count_processed += 1
             if not r[FIELD_START] or r[FIELD_START] < time_finish:
                 break
             else:
                 if url in r[FIELD_URL] or url in r[FIELD_QS]:
                     requests.append(r)
+            count_processed += 1
                 
     print("search by url ends: %s" % datetime.now())
     print(requests)
