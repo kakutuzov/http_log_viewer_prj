@@ -235,15 +235,14 @@ def search_by_url(mins, url):
     if db and db.requests and db.requests.count() > 0:
         fields = [FIELD_IP, FIELD_START, FIELD_USERNAME, FIELD_URL, FIELD_QS]
         sort = [(FIELD_ID,pymongo.DESCENDING)]
-        print("find starts: {0}".format(datetime.now()))
         requests_all = db.requests.find(limit=100000, fields = fields, sort=sort)
         time_start = requests_all[0][FIELD_START]
-        print("find ends: {0}".format(datetime.now()))
         time_finish = time_start - timedelta(seconds=mins*60)
-        print("time stop: {0}".format(time_finish))      # remove line debug only
+        print("actual time start %s and estimated time stop %s" % (time_start, time_finish)) 
         
         for r in requests_all:
             if not r[FIELD_START] or r[FIELD_START] < time_finish:
+                print("actual time stop %s" % r[FIELD_START])
                 break
             else:
                 if url in r[FIELD_URL] or url in r[FIELD_QS]:
@@ -251,7 +250,7 @@ def search_by_url(mins, url):
             count_processed += 1
                 
     print("search by url ends: %s" % datetime.now())
-    print(requests)
+    #print(requests)
     requests.sort(key=lambda r: r[FIELD_START], reverse=True)
     return (requests, db.name if db else 'Undefined', count_processed)
 
