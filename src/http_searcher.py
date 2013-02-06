@@ -20,6 +20,7 @@ FIELD_USERNAME = 'cU'
 FIELD_METHOD = 'cM'
 FIELD_STATUS = 'scS'
 FIELD_USERAGENT = 'cA'
+FIELD_END = 'tE'
 
 CONNECTION = "mongodb://192.168.0.158:27017,192.168.0.159:27017/"
 
@@ -59,22 +60,22 @@ def get_top_requests(mins, top):
     count = 0
     db_name = 'Undefined'
     if db and db.requests and db.requests.count() > 0:
-        #fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
+        #fields = [FIELD_IP, FIELD_END, FIELD_TIME, FIELD_URL, \
                       #FIELD_QS, FIELD_SERVER, FIELD_USERNAME]
-        fields = [FIELD_IP, FIELD_START]
+        fields = [FIELD_IP, FIELD_END]
         print(datetime.now())
         print("find starts: {0}".format(datetime.now()))
         requests = db.requests.find(limit=1000000,\
                                         fields = fields, \
                                         sort=[(FIELD_ID,pymongo.DESCENDING)])
-        time_start = requests[0][FIELD_START]
+        time_start = requests[0][FIELD_END]
         print("find ends: {0}".format(datetime.now()))
         time_finish = time_start - timedelta(seconds=mins*60)
         print("time stop: {0}".format(time_finish))      # remove line debug only
         r_by_ip = {}
         for r in requests:
-            #print(r[FIELD_START]) # remove
-            if not r[FIELD_START] or r[FIELD_START] < time_finish:
+            #print(r[FIELD_END]) # remove
+            if not r[FIELD_END] or r[FIELD_END] < time_finish:
                 break
             else:
                 count += 1
@@ -93,7 +94,7 @@ def get_requests_by_ids(ids = []):
     db = get_latest_db()
     requests = []
     if db and db.requests:
-        fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
+        fields = [FIELD_IP, FIELD_END, FIELD_TIME, FIELD_URL, \
                       FIELD_QS, FIELD_SERVER, FIELD_USERNAME,\
                       FIELD_STATUS, FIELD_METHOD, FIELD_USERAGENT]
         query = {FIELD_ID : {'$in':[ObjectId(id) for id in ids]}}
@@ -226,23 +227,23 @@ def search_by_queries(collection, queries, skip, limit):
 #     return db.requests.find(query).skip(skip).limit(count)
 
 
-def search_by_url(mins, url):
+def search_by_url(secs, url):
     print("search by url starts: %s" % datetime.now())
     db = get_latest_db()
     requests = []
     count_processed = 0
     url = (url or '').lower()
     if db and db.requests and db.requests.count() > 0:
-        fields = [FIELD_IP, FIELD_START, FIELD_USERNAME, FIELD_URL, FIELD_QS]
+        fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_START]
         sort = [(FIELD_ID,pymongo.DESCENDING)]
         requests_all = db.requests.find(limit=100000, fields = fields, sort=sort)
-        time_start = requests_all[0][FIELD_START]
-        time_finish = time_start - timedelta(seconds=mins*60)
+        time_start = requests_all[0][FIELD_END]
+        time_finish = time_start - timedelta(seconds=secs)
         print("actual time start %s and estimated time stop %s" % (time_start, time_finish)) 
         
         for r in requests_all:
-            if not r[FIELD_START] or r[FIELD_START] < time_finish:
-                print("actual time stop %s" % r[FIELD_START])
+            if not r[FIELD_END] or r[FIELD_END] < time_finish:
+                print("actual time stop %s" % r[FIELD_END])
                 break
             else:
                 if url in r[FIELD_URL] or url in r[FIELD_QS]:
@@ -251,7 +252,7 @@ def search_by_url(mins, url):
                 
     print("search by url ends: %s" % datetime.now())
     #print(requests)
-    requests.sort(key=lambda r: r[FIELD_START], reverse=True)
+    requests.sort(key=lambda r: r[FIELD_END], reverse=True)
     return (requests, db.name if db else 'Undefined', count_processed)
 
 if __name__ == '__main__':

@@ -11,13 +11,13 @@
     <legend>Search</legend>
     <div class="input-prepend input-append hlsu-search-mins">
       <span class="add-on">Last</span>
-      <select name="mins">
-	{%for option in range(1,6) %}
-	<option value="{{option}}" {{'selected' if option == mins}}>
+      <select name="secs">
+	{%for option in range(5,120, 10) %}
+	<option value="{{option}}" {{'selected' if option == secs}}>
 	  {{option}}</option>
 	{%endfor%} 
       </select>
-      <span class="add-on">mins</span>
+      <span class="add-on">secs</span>
     </div>
     <div class="input-prepend hlsu-search-url">
       <span class="add-on">URL <b>contains</b> </span><input class="url" id="url" size="16" type="text" placeholder="example: txt=12345" name="url" value="{{ url }}"></input>
@@ -47,7 +47,7 @@
         {% for r in requests %}
 	 <tr>
 	   <td>{{loop.index}}</td>
-	   <td class="hlsu-result-time">{{r['tB']}}</td>
+	   <td class="hlsu-result-time">{{r['tE']}}</td>
 	   <td>{{r['cU']}}</td>
 	   <td>{{r['cIP']}}</td>
 	   <td>{{r['cURL']}}</td>
