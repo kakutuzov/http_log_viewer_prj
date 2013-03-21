@@ -99,7 +99,7 @@ def ajax_requests_by_ids():
 		</thead><tbody> %s </tbody></table></blockquote>"""
     tr_html = """<tr>
 		    <td>%s</td>
-		    <td>%s</td>
+		    <td>%s:%s</td>
 		    <td class="tr-result-ip-time">%s</td>
                     <td>%s</td>
                     <td>%s</td>
@@ -111,6 +111,7 @@ def ajax_requests_by_ids():
                        ''.join([ tr_html % \
                                    (r[s.FIELD_USERNAME], \
                                         r[s.FIELD_SERVER], \
+                                        r[s.FIELD_SERVER_PORT], \
                                         r[s.FIELD_START], \
                                         (r[s.FIELD_METHOD] or '').upper(), \
                                         r[s.FIELD_STATUS], \

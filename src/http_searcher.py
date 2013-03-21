@@ -20,6 +20,7 @@ FIELD_USERNAME = 'cU'
 FIELD_METHOD = 'cM'
 FIELD_STATUS = 'scS'
 FIELD_USERAGENT = 'cA'
+FIELD_SERVER_PORT = 'sP'
 
 CONNECTION = "mongodb://192.168.0.158:27017,192.168.0.159:27017/"
 
@@ -95,7 +96,7 @@ def get_requests_by_ids(ids = []):
     if db and db.requests:
         fields = [FIELD_IP, FIELD_START, FIELD_TIME, FIELD_URL, \
                       FIELD_QS, FIELD_SERVER, FIELD_USERNAME,\
-                      FIELD_STATUS, FIELD_METHOD, FIELD_USERAGENT]
+                      FIELD_STATUS, FIELD_METHOD, FIELD_USERAGENT, FIELD_SERVER_PORT]
         query = {FIELD_ID : {'$in':[ObjectId(id) for id in ids]}}
         requests = db.requests.find(query, fields= fields, limit = 1000)
     return requests
@@ -233,7 +234,7 @@ def search_by_url(mins, url):
     count_processed = 0
     url = (url or '').lower()
     if db and db.requests and db.requests.count() > 0:
-        fields = [FIELD_IP, FIELD_START, FIELD_USERNAME, FIELD_URL, FIELD_QS]
+        fields = [FIELD_IP, FIELD_START, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT]
         sort = [(FIELD_ID,pymongo.DESCENDING)]
         requests_all = db.requests.find(limit=100000, fields = fields, sort=sort)
         time_start = requests_all[0][FIELD_START]

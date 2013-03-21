@@ -37,6 +37,7 @@
             <tr>
               <th >#</th>
               <th >Time (UTC)</th>
+	      <th>Server</th>
               <th >Username</th>
               <th >IP</th>
               <th >Path</th>
@@ -48,6 +49,7 @@
 	 <tr>
 	   <td>{{loop.index}}</td>
 	   <td class="hlsu-result-time">{{r['tB']}}</td>
+	   <td>{{r['sIP']}}:{{r['sP']}}</td>
 	   <td>{{r['cU']}}</td>
 	   <td>{{r['cIP']}}</td>
 	   <td>{{r['cURL']}}</td>
