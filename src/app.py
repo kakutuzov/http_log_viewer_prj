@@ -113,6 +113,7 @@ def ajax_requests_by_ids():
                                         r[s.FIELD_SERVER], \
                                         r[s.FIELD_SERVER_PORT], \
                                         r[s.FIELD_START], \
+                                        r[s.FIELD_END], \
                                         (r[s.FIELD_METHOD] or '').upper(), \
                                         r[s.FIELD_STATUS], \
                                         r[s.FIELD_USERAGENT], \
@@ -144,16 +145,17 @@ def log_top():
 @app.route("/log/search/url")
 def log_search_url():
     print("log_search_url starts: %s" % (datetime.now()))
-    mins = int(request.args.get('mins') or 1)
-    url = request.args.get('url') or ''
-    print("mins=%s, url=%s" % (mins, url))
-    (requests, db_name, count_processed) = s.search_by_url(mins, url)
+    secs = int(request.args.get('secs') or 5)
+    url = request.args.get('url') or 'txt='
+    print("secs=%s, url=%s" % (secs, url))
+    (requests, db_name, count_processed) = s.search_by_url(secs, url)
     return render_template('log_search_url.html', \
                            requests = requests, \
-                           mins = mins, \
+                           secs = secs, \
                            url = url, \
                            count = count_processed)
     
+#app.debug = True
 
 
 if __name__ == '__main__':
