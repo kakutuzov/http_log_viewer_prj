@@ -112,7 +112,6 @@ def ajax_requests_by_ids():
                                    (r[s.FIELD_USERNAME], \
                                         r[s.FIELD_SERVER], \
                                         r[s.FIELD_SERVER_PORT], \
-                                        r[s.FIELD_START], \
                                         r[s.FIELD_END], \
                                         (r[s.FIELD_METHOD] or '').upper(), \
                                         r[s.FIELD_STATUS], \
@@ -146,7 +145,7 @@ def log_top():
 def log_search_url():
     print("log_search_url starts: %s" % (datetime.now()))
     secs = int(request.args.get('secs') or 5)
-    url = request.args.get('url') or 'txt='
+    url = request.args.get('url') or ''
     print("secs=%s, url=%s" % (secs, url))
     (requests, db_name, count_processed) = s.search_by_url(secs, url)
     return render_template('log_search_url.html', \
