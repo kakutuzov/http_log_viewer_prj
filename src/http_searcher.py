@@ -46,6 +46,9 @@ def get_db(db_date):
     else:
         return None
 
+def get_db_by_name(db_name):
+    c = get_connection()
+    return c[db_name]
 
 def get_latest_db():
     c = get_connection()
@@ -255,6 +258,25 @@ def search_by_url(secs, url):
     #print(requests)
     requests.sort(key=lambda r: r[FIELD_END], reverse=True)
     return (requests, db.name if db else 'Undefined', count_processed)
+
+def search_by_username(db_name, username):
+    print("search by username starts: %s" % datetime.now())
+    requests = []
+    username = (username or '').strip().lower()
+    counter = 0
+    if db_name and username:
+        print(username, db_name)
+        db = get_db_by_name(db_name) #or get_latest_db()
+        print(db)
+        if db and db.requests and db.requests.count() > 0:
+            fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT]
+            sort = [(FIELD_ID,pymongo.DESCENDING)]
+            requests = db.requests.find({'cU' : username}, limit=10000, fields = fields, sort=sort)
+            print(requests)
+            counter = requests.count()
+                    
+    print("search by username ends: %s" % datetime.now())
+    return (requests, counter)
 
 if __name__ == '__main__':
     result = search_by_params(cURL='', cIP='192.168.0.3')

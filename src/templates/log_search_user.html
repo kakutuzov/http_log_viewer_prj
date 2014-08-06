@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block title %}http log url searcher {% endblock %}
+{% block head %}
+{{super()}}
+{% endblock %}
+{% block content %}
+<!-- <h1>http log url searcher</h1> -->
+<div class="hlsu-search">
+<form class="form-inline" method="get">
+  <fieldset>
+    <legend>Search</legend>
+    <div class="input-prepend input-append hlsu-search-dbname">
+      <span class="add-on">DB name</span>
+      <select name="db_name">
+	{%for option in  db_names %}
+	<option value="{{option}}" {{'selected' if option == db_name}}>
+	  {{option}}</option>
+	{%endfor%} 
+      </select>
+    </div>
+    <div class="input-prepend hlsu-search-useraname">
+      <span class="add-on">Login <b>=</b> </span><input class="username" id="username" size="16" type="text" placeholder="example: translogistic" name="username" value="{{ username }}"></input>
+    </div>
+    <button type="submit" class="btn">Search</button>
+  </fieldset>
+  
+</form>
+
+</div>
+
+<div class="hlsu-result">
+    <div class="hlsu-result-grid">
+        <legend>Result <small class="muted">found <i>{{ count }}</i> requests</small></legend> 
+        {%if count > 0 %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th >#</th>
+              <th >Time (UTC)</th>
+	      <th>Server</th>
+              <th >Username</th>
+              <th >IP</th>
+              <th >Path</th>
+              <th >Query</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for r in requests %}
+	 <tr>
+	   <td>{{loop.index}}</td>
+	   <td class="hlsu-result-time">{{r['tE']}}</td>
+	   <td>{{r['sIP']}}:{{r['sP']}}</td>
+	   <td>{{r['cU']}}</td>
+	   <td>{{r['cIP']}}</td>
+	   <td>{{r['cURL']}}</td>
+	   <td><div class="hlsu-result-qs">{{r['cQS']}}</td>
+	 </tr>
+          
+	{% endfor %}
+      </tbody>
+</table>
+
+{%endif%}
+
+</div>
+	
+{% endblock %}

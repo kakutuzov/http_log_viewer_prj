@@ -9,7 +9,7 @@ import logging
 app = Flask(__name__)
 
 @app.route('/', methods = ['GET'])
-def defualt():
+def default():
     return "http log viewer"
 
 @app.route('/log', methods = ['GET'])
@@ -66,7 +66,7 @@ def get_more_info():
         'cookie': row['cC'], \
         'waiting&nbsp;time': "%s msec" % row['tT'], \
         'verb': row['cM'], \
-	'code' : row['scS'], \
+    'code' : row['scS'], \
         'post': row['cPOST'] if row['cM'] in ['post', 'put'] else ''
         }
     return jsonify(request = \
@@ -86,27 +86,27 @@ def ajax_requests_by_ids():
     ids = request.form.get('ids')
     requests = s.get_requests_by_ids(ids.split(','))
     table_html = """<blockquote><table class='table'><thead>
-		  <tr>
-		    <th>Login</th>
-		    <th>Server</th>
-		    <th>Time(UTC)</th>
+          <tr>
+            <th>Login</th>
+            <th>Server</th>
+            <th>Time(UTC)</th>
                     <th>Method</th>
                     <th>Status</th>
                     <th>UserAgent</th>
-		    <th>URL</th>
-		    <th>QS</th>
-		  </tr>
-		</thead><tbody> %s </tbody></table></blockquote>"""
+            <th>URL</th>
+            <th>QS</th>
+          </tr>
+        </thead><tbody> %s </tbody></table></blockquote>"""
     tr_html = """<tr>
-		    <td>%s</td>
-		    <td>%s:%s</td>
-		    <td class="tr-result-ip-time">%s</td>
+            <td>%s</td>
+            <td>%s:%s</td>
+            <td class="tr-result-ip-time">%s</td>
                     <td>%s</td>
                     <td>%s</td>
-		    <td>%s</td>
-		    <td>%s</td>
-		    <td><div class="tr-result-ip-qs">%s</div></td>
-		  </tr>"""
+            <td>%s</td>
+            <td>%s</td>
+            <td><div class="tr-result-ip-qs">%s</div></td>
+          </tr>"""
     json = jsonify(html = table_html % \
                        ''.join([ tr_html % \
                                    (r[s.FIELD_USERNAME], \
@@ -126,7 +126,7 @@ def ajax_requests_by_ids():
 def top_log():
     return redirect(url_for('log_top'))
 
-@app.route("/log/top")
+@app.route("/log/top/")
 def log_top():
     mins = int(request.args.get('mins') or 5)
     top = int(request.args.get('top') or 50)
@@ -141,7 +141,7 @@ def log_top():
                                top = top)
 
 
-@app.route("/log/search/url")
+@app.route("/log/search/url/")
 def log_search_url():
     print("log_search_url starts: %s" % (datetime.now()))
     secs = int(request.args.get('secs') or 5)
@@ -152,6 +152,21 @@ def log_search_url():
                            requests = requests, \
                            secs = secs, \
                            url = url, \
+                           count = count_processed)
+
+@app.route("/log/search/user/")
+def log_search_user():
+    print("log_search_user starts: %s" % (datetime.now()))
+    db_name = request.args.get('db_name')
+    username = request.args.get('username') or ''
+
+    print("db_name=%s, username=%s" % (db_name, username))
+    (requests, count_processed) = s.search_by_username(db_name, username)
+    return render_template('log_search_user.html', \
+                           requests = requests, \
+                           db_name = db_name, \
+                           db_names = s.get_db_names(), \
+                           username = username, \
                            count = count_processed)
     
 #app.debug = True
