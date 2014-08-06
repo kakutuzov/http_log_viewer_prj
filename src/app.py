@@ -7,6 +7,7 @@ from datetime import datetime, date, timedelta
 import logging
 
 app = Flask(__name__)
+app.debug = True
 
 @app.route('/', methods = ['GET'])
 def default():
@@ -157,10 +158,10 @@ def log_search_url():
 @app.route("/log/search/user/")
 def log_search_user():
     print("log_search_user starts: %s" % (datetime.now()))
-    db_name = request.args.get('db_name')
-    username = request.args.get('username') or ''
+    db_name = unicode(request.args.get('db_name'))
+    username = unicode(request.args.get('username') or '')
 
-    print("db_name=%s, username=%s" % (db_name, username))
+    #print(u"db_name=%s, username=%s" % (db_name, username))
     (requests, count_processed) = s.search_by_username(db_name, username)
     return render_template('log_search_user.html', \
                            requests = requests, \

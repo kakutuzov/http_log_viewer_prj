@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- encoding: utf-8 -*-
+
 from pymongo import Connection, MongoClient
 from pymongo import *
 from pymongo.read_preferences import ReadPreference
