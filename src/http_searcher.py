@@ -243,7 +243,7 @@ def search_by_url(secs, url):
     if db and db.requests and db.requests.count() > 0:
         fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT]
         sort = [(FIELD_ID,pymongo.DESCENDING)]
-        requests_all = db.requests.find(limit=100000, fields = fields, sort=sort)
+        requests_all = db.requests.find(limit=1000000, fields = fields, sort=sort)
         time_start = requests_all[0][FIELD_END]
         time_finish = time_start - timedelta(seconds=secs)
         print("actual time start %s and estimated time stop %s" % (time_start, time_finish)) 
