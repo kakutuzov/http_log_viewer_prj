@@ -241,7 +241,7 @@ def search_by_url(secs, url):
     count_processed = 0
     url = (url or '').lower()
     if db and db.requests and db.requests.count() > 0:
-        fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT]
+        fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT, FIELD_STATUS]
         sort = [(FIELD_ID,pymongo.DESCENDING)]
         requests_all = db.requests.find(limit=1000000, fields = fields, sort=sort)
         time_start = requests_all[0][FIELD_END]
@@ -272,7 +272,7 @@ def search_by_username(db_name, username):
         db = get_db_by_name(db_name) #or get_latest_db()
         print(db)
         if db and db.requests and db.requests.count() > 0:
-            fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT]
+            fields = [FIELD_IP, FIELD_END, FIELD_USERNAME, FIELD_URL, FIELD_QS, FIELD_SERVER, FIELD_SERVER_PORT, FIELD_STATUS]
             sort = [(FIELD_ID,pymongo.DESCENDING)]
             requests = db.requests.find({'cU' : username}, limit=10000, fields = fields, sort=sort)
             print(requests)
